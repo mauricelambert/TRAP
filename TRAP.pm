@@ -39,17 +39,17 @@ use File::Map 'map_file';
 # use warnings;
 # use Data::Dumper;
 
-our $NAME="TRAP";
-our $VERSION="0.0.1";
-our $AUTHOR="Maurice Lambert";
-our $MAINTAINER="Maurice Lambert";
-our $AUTHOR_MAIL='mauricelambert434@gmail.com';
-our $MAINTAINER_MAIL='mauricelambert434@gmail.com';
+our $NAME            = "TRAP";
+our $VERSION         = "0.0.1";
+our $AUTHOR          = "Maurice Lambert";
+our $MAINTAINER      = "Maurice Lambert";
+our $AUTHOR_MAIL     = 'mauricelambert434@gmail.com';
+our $MAINTAINER_MAIL = 'mauricelambert434@gmail.com';
 
-our $DESCRIPTION="This file implements a forensic analyser based on regex.";
-our $URL="https://github.com/mauricelambert/$NAME";
-our $LICENSE="GPL-3.0 License";
-our $COPYRIGHT = <<'EOF';
+our $DESCRIPTION = "This file implements a forensic analyser based on regex.";
+our $URL         = "https://github.com/mauricelambert/$NAME";
+our $LICENSE     = "GPL-3.0 License";
+our $COPYRIGHT   = <<'EOF';
 TRAP (Tool for Regex Analysis with Perl)  Copyright (C) 2022  Maurice Lambert
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
@@ -69,7 +69,7 @@ __|_____|___|____|_______|___|_____|___|____
 
 EOF
 
-*FILENAME = \(basename($0));
+*FILENAME = \( basename($0) );
 our $FILENAME;
 
 # my ($filenoext, $dirname, $extension) = fileparse($0);
@@ -80,23 +80,25 @@ our $FILENAME;
 # *FILENOEXT = \($filenoext);
 # our $FILENOEXT;
 
-*SYSTEMDATE = \(localtime->strftime('%Y%m%d_%H%M%S'));
+*SYSTEMDATE = \( localtime->strftime('%Y%m%d_%H%M%S') );
 our $SYSTEMDATE;
 
-*LOGFILENAME = \($FILENAME."_"."$SYSTEMDATE.log.csv");
+*LOGFILENAME = \( $FILENAME . "_" . "$SYSTEMDATE.log.csv" );
 our $LOGFILENAME;
 
 my $colormode;
-if (/^(-c|--no-color)$/ ~~ @ARGV) {
-	$colormode = '0';
-} else {
-	$colormode = '1';
+if ( /^(-c|--no-color)$/ ~~ @ARGV ) {
+    $colormode = '0';
+}
+else {
+    $colormode = '1';
 }
 
 my $debugmode;
-if (/^(-d|--debug)$/ ~~ @ARGV) {
+if ( /^(-d|--debug)$/ ~~ @ARGV ) {
     $debugmode = '1';
-} else {
+}
+else {
     $debugmode = '0';
 }
 
@@ -106,19 +108,19 @@ our $COLOR;
 *DEBUG = \($debugmode);
 our $DEBUG;
 
-*GREEN = \(color('green'));
+*GREEN = \( color('green') );
 our $GREEN;
-*CYAN = \(color('cyan'));
+*CYAN = \( color('cyan') );
 our $CYAN;
-*MAGENTA = \(color('magenta'));
+*MAGENTA = \( color('magenta') );
 our $MAGENTA;
-*YELLOW = \(color('yellow'));
+*YELLOW = \( color('yellow') );
 our $YELLOW;
-*BOLDBLUE = \(color('bold blue'));
+*BOLDBLUE = \( color('bold blue') );
 our $BOLDBLUE;
-*RESET = \(color('reset'));
+*RESET = \( color('reset') );
 our $RESET;
-*BOLDRED = \(color('bold red'));
+*BOLDRED = \( color('bold red') );
 our $BOLDRED;
 
 #pod =method log_debug
@@ -140,9 +142,9 @@ our $BOLDRED;
 sub log_debug {
     return 0 if !$DEBUG;
 
-    my ($message, $files_ref) = @_;
-    my ($package, $filename, $line) = caller;
-    logging($message, "DEBUG", "$package:$filename:$line", $files_ref);
+    my ( $message, $files_ref ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    logging( $message, "DEBUG", "$package:$filename:$line", $files_ref );
     return 0;
 }
 
@@ -165,9 +167,9 @@ sub log_debug {
 sub log_info {
     return 0 if !$DEBUG;
 
-    my ($message, $files_ref) = @_;
-    my ($package, $filename, $line) = caller;
-    logging($message, "INFO", "$package:$filename:$line", $files_ref);
+    my ( $message, $files_ref ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    logging( $message, "INFO", "$package:$filename:$line", $files_ref );
     return 0;
 }
 
@@ -190,9 +192,9 @@ sub log_info {
 sub log_warning {
     return 0 if !$DEBUG;
 
-    my ($message, $files_ref) = @_;
-    my ($package, $filename, $line) = caller;
-    logging($message, "WARNING", "$package:$filename:$line", $files_ref);
+    my ( $message, $files_ref ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    logging( $message, "WARNING", "$package:$filename:$line", $files_ref );
     return 0;
 }
 
@@ -215,9 +217,9 @@ sub log_warning {
 sub log_error {
     return 0 if !$DEBUG;
 
-    my ($message, $files_ref) = @_;
-    my ($package, $filename, $line) = caller;
-    logging($message, "ERROR", "$package:$filename:$line", $files_ref);
+    my ( $message, $files_ref ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    logging( $message, "ERROR", "$package:$filename:$line", $files_ref );
     return 0;
 }
 
@@ -240,9 +242,9 @@ sub log_error {
 sub log_critical {
     return 0 if !$DEBUG;
 
-    my ($message, $files_ref) = @_;
-    my ($package, $filename, $line) = caller;
-    logging($message, "CRITICAL", "$package:$filename:$line", $files_ref);
+    my ( $message, $files_ref ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    logging( $message, "CRITICAL", "$package:$filename:$line", $files_ref );
     return 0;
 }
 
@@ -252,7 +254,7 @@ sub log_critical {
 #pod     logging "My log message.", "ERROR", "script.pl:20";
 #pod
 #pod The logging function to log messages in CSV format.
-#pod 
+#pod
 #pod =over 4
 #pod =item *
 #pod [REQUIRED - string] First argument is the message.
@@ -277,16 +279,22 @@ sub log_critical {
 sub logging {
     return 0 if !$DEBUG;
 
-    my ($message, $level, $localization, $files_ref) = @_;
+    my ( $message, $level, $localization, $files_ref ) = @_;
 
-    my ($package, $filename, $line) = caller;
+    my ( $package, $filename, $line ) = caller;
     $localization = "$package:$filename:$line" if !defined($localization);
 
-    my $csv = $files_ref->{'CSV'};
+    my $csv  = $files_ref->{'CSV'};
     my $file = $files_ref->{'log'};
 
     # date, level, filename, PID, process, filename:line, message
-    $csv->say($file, [localtime->strftime('%Y-%m-%d %T'), $level, $FILENAME, $$, $^X, $localization, $message]) or die "Can't write log in $LOGFILENAME: $!";
+    $csv->say(
+        $file,
+        [
+            localtime->strftime('%Y-%m-%d %T'),
+            $level, $FILENAME, $$, $^X, $localization, $message
+        ]
+    ) or die "Can't write log in $LOGFILENAME: $!";
 
     return 0;
 }
@@ -309,10 +317,16 @@ sub init_log {
 
     my ($files_ref) = @_;
 
-    my $csv = $files_ref->{'CSV'};
+    my $csv  = $files_ref->{'CSV'};
     my $file = $files_ref->{'log'};
 
-    $csv->say($file, ["Date Time", "Log Level", "Filename", "PID", "Process", "Localization", "Log Message"]) or die "Can't write log in $LOGFILENAME: $!";
+    $csv->say(
+        $file,
+        [
+            "Date Time", "Log Level",    "Filename", "PID",
+            "Process",   "Localization", "Log Message"
+        ]
+    ) or die "Can't write log in $LOGFILENAME: $!";
     return 0;
 }
 
@@ -334,7 +348,7 @@ sub init_log {
 #pod =cut
 
 sub log_and_die {
-    my ($message, $files_ref) = @_;
+    my ( $message, $files_ref ) = @_;
     log_critical "$message", $files_ref if !$DEBUG;
     die "$message";
 }
@@ -366,9 +380,10 @@ sub log_and_die {
 #pod =cut
 
 sub save_match {
-    my ($counter_ref, $files_ref, $file_analysed, $type, $match, $start, $end) = @_;
+    my ( $counter_ref, $files_ref, $file_analysed, $type, $match, $start, $end )
+      = @_;
 
-    my $csv = $files_ref->{'CSV'};
+    my $csv  = $files_ref->{'CSV'};
     my $file = $files_ref->{$type};
 
     # say $files_ref;
@@ -376,18 +391,39 @@ sub save_match {
     # say $csv;
     # say $file;
 
-    if (!defined($file)) {
-        my $filename = $NAME."_$SYSTEMDATE/$type.csv";
-        open $file, ">>:encoding(utf8)", "$filename" || log_and_die "Can't open: $filename: $!", $files_ref;
-        
-        $csv->say($file, ["Date Time", "Counter total", "Counter $type", "Type", "Filename", "Start position", "End position", "Match"]) || log_and_die "Can't write: $filename: $!", $files_ref;
-        log_debug("$filename initialized", $files_ref);
+    if ( !defined($file) ) {
+        my $filename = $NAME . "_$SYSTEMDATE/$type.csv";
+        open $file, ">>:encoding(utf8)",
+          "$filename" || log_and_die "Can't open: $filename: $!", $files_ref;
+
+        $csv->say(
+            $file,
+            [
+                "Date Time",
+                "Counter total",
+                "Counter $type",
+                "Type",
+                "Filename",
+                "Start position",
+                "End position",
+                "Match"
+            ]
+        ) || log_and_die "Can't write: $filename: $!", $files_ref;
+        log_debug( "$filename initialized", $files_ref );
 
         $files_ref->{$type} = $file;
     }
 
-    log_debug("Save match type $file_analysed ($start, $end)...", $files_ref);
-    $csv->say($file, [localtime->strftime('%Y-%m-%d %T'), $counter_ref->{'total'}, $counter_ref->{$type}, "$type", "$file_analysed", "$start", "$end", "$match"]) || log_and_die "Can't write match type: $type: $!", $files_ref;
+    log_debug( "Save match type $file_analysed ($start, $end)...", $files_ref );
+    $csv->say(
+        $file,
+        [
+            localtime->strftime('%Y-%m-%d %T'), $counter_ref->{'total'},
+            $counter_ref->{$type},              "$type",
+            "$file_analysed",                   "$start",
+            "$end",                             "$match"
+        ]
+    ) || log_and_die "Can't write match type: $type: $!", $files_ref;
 }
 
 #pod =method process_match
@@ -419,11 +455,12 @@ sub save_match {
 #pod =cut
 
 sub process_match {
-    my ($counter_ref, $files_ref, $filename, $type, $match, $start, $end) = @_;
+    my ( $counter_ref, $files_ref, $filename, $type, $match, $start, $end ) =
+      @_;
 
-    log_info("Process new match ($type)...", $files_ref);
+    log_info( "Process new match ($type)...", $files_ref );
 
-    log_debug("Initialise/Increment counter...", $files_ref);
+    log_debug( "Initialise/Increment counter...", $files_ref );
     my $total = $counter_ref->{'total'};
     my $total_field = $counter_ref->{$type} // 0;
 
@@ -432,44 +469,26 @@ sub process_match {
 
     $end = 0 if !defined($end);
 
-    log_debug("Print information in the console....", $files_ref);
+    log_debug( "Print information in the console....", $files_ref );
     if ($COLOR) {
         printf(
             "%s %s%.10X %s%.10X %s%.8d %s%.8d %s%-10s%s: %s%s%s\n",
-            $filename,
-            $CYAN,
-            $start,
-            $MAGENTA,
-            $end,
-            $GREEN,
-            $total,
-            $YELLOW,
-            $total_field,
-            $BOLDBLUE,
-            $type,
-            $RESET,
-            $BOLDRED,
-            $match,
-            $RESET
-        );
-    } else {
-        printf(
-            "%s %.10X %.10X %.8d %.8d %-10s: %s\n",
-            $filename,
-            $start,
-            $end,
-            $total,
-            $total_field,
-            $type,
-            $match
+            $filename, $CYAN,  $start,   $MAGENTA,     $end,
+            $GREEN,    $total, $YELLOW,  $total_field, $BOLDBLUE,
+            $type,     $RESET, $BOLDRED, $match,       $RESET
         );
     }
+    else {
+        printf( "%s %.10X %.10X %.8d %.8d %-10s: %s\n",
+            $filename, $start, $end, $total, $total_field, $type, $match );
+    }
 
-    log_debug("Set counter...", $files_ref);
+    log_debug( "Set counter...", $files_ref );
     $counter_ref->{'total'} = $total;
     $counter_ref->{$type} = $total_field;
 
-    save_match($counter_ref, $files_ref, $filename, $type, $match, $start, $end);
+    save_match( $counter_ref, $files_ref, $filename, $type, $match, $start,
+        $end );
 
     return;
 }
@@ -492,73 +511,126 @@ sub process_match {
 #pod =cut
 
 sub analysis {
-    my ($filename, $files_ref) = @_;
+    my ( $filename, $files_ref ) = @_;
 
-    log_debug("Start analyse on $filename. Defined fields name...", $files_ref);
+    log_debug( "Start analyse on $filename. Defined fields name...",
+        $files_ref );
 
-    my $ip_field = "IP";
-    my $uu_field = "UU";
-    my $kb_field = "KB";
-    my $url_field = "URL";
-    my $gps_field = "GPS";
-    my $uuid_field = "UUID";
-    my $word_field = "WORD";
-    my $time_field = "TIME";
-    my $hash_field = "HASH";
-    my $path_field = "PATH";
-    my $phone_field = 'PHONE';
-    my $email_field = '@EMAIL';
-    my $domain_field = "DOMAIN";
-    my $base64_field = "BASE64";
-    my $base16_field = "BASE16";
+    my $ip_field        = "IP";
+    my $uu_field        = "UU";
+    my $kb_field        = "KB";
+    my $url_field       = "URL";
+    my $gps_field       = "GPS";
+    my $uuid_field      = "UUID";
+    my $word_field      = "WORD";
+    my $time_field      = "TIME";
+    my $hash_field      = "HASH";
+    my $path_field      = "PATH";
+    my $phone_field     = 'PHONE';
+    my $email_field     = '@EMAIL';
+    my $domain_field    = "DOMAIN";
+    my $base64_field    = "BASE64";
+    my $base16_field    = "BASE16";
     my $urlencode_field = "URLENCODE";
 
-    log_debug("Initialise counter...", $files_ref);
-    my %counter = (total => 0, filename => $filename);
+    log_debug( "Initialise counter...", $files_ref );
+    my %counter = ( total => 0, filename => $filename );
     my $counter_ref = \%counter;
 
-    log_debug("Memory map $filename...", $files_ref);
-    map_file (my $map, $filename);
+    log_debug( "Memory map $filename...", $files_ref );
+    map_file( my $map, $filename );
 
-    log_debug("Start research using regex...", $files_ref);
+    log_debug( "Start research using regex...", $files_ref );
 
-    log_debug("Research IP...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $ip_field, $&, @-, @+)        while( $map =~ /(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}/g );
-    log_debug("Research domain...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $domain_field, $&, @-, @+)    while( $map =~ /(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}/g );
-    log_debug("Research URL...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $url_field, $&, @-, @+)       while( $map =~ m$((http|https)://)(www.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$g );
-    log_debug("Research base64...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $base64_field, $&, @-, @+)    while( $map =~ m$(?:[A-Za-z\d+/]{4}){10,}(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$g );
-    log_debug("Research base16...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $base16_field, $&, @-, @+)    while( $map =~ m$[0-9a-fA-F]{2}(?P<separator>[^0-9a-fA-F]?)([0-9a-fA-F]{2}(?P=separator)){3,}[0-9a-fA-F]{2}$g );
-    log_debug("Research email address...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $email_field, $&, @-, @+)     while( $map =~ m$(([^<>()[\]\.,;:\s@"]+(\.[^<>()[\]\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$g );
-    log_debug("Research UUID...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $uuid_field, $&, @-, @+)      while( $map =~ m$\{?[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\}?$g );
-    log_debug("Research URL encoding...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $urlencode_field, $&, @-, @+) while( $map =~ m$[-a-zA-Z0-9@:%._\+~#?&//=]*(%(25)?[0-9A-Fa-f]{2}){5,}[-a-zA-Z0-9@:%._\+~#?&//=]*$g );
-    log_debug("Research path...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $path_field, $&, @-, @+)      while( $map =~ m$(/|C:\\|\.\.?(/|\\\\?))[\w .]+([/\\\w .]+)$g );
-    log_debug("Research GPS...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $gps_field, $&, @-, @+)       while( $map =~ m$([SNsn] )?-?[1-3]?[0-9]{1,2}(° ?|d ?|:|,|\.)-?[0-9]{1,7}('|m|:|[SNsn] ?,? ?|\.|′ ?|° ?|, ?)-?[0-9]{1,7}(\.|[SNsn],| |', [EWew] |″[SNsn] |″ [SNsn] |, ?)-?[0-9]{1,7}("(north|south), |"?[SNsn],? |:|E|° ?|d |[EWew])(-?[0-9]{1,2}(°|′ ?|:|\.|d)(-?[0-9]{1,7}(('|m|″ [EWew]|:|[EWew])(-?[0-9]{1,2}\.-?[0-9]{3}("(east|west)|"?[EWew])?)?)?)?)?$gi );
-    log_debug("Research hash...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $hash_field, $&, @-, @+)      while( $map =~ m~([0-9a-fA-F]{32}([0-9a-fA-F]{8})?([0-9a-fA-F]{24})?([0-9a-fA-F]{64})?|$[0-9]+[a-zA-Z]*$[0-9\w/\.]+$[\w/\.]+)~g );
-    log_debug("Research phone numbers...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $phone_field, $&, @-, @+)     while( $map =~ m$\+?\(?([0-9][- ]?)?(xx)?[0-9]{2,5}\)?(( – )?[- ]?\(?[0-9]{1,3}\)?[ 0-9]?)?( ?\(0\))?( – )?( ?/ ?)?[-\s\.]?\(?[0-9]{2,4}\)?( – )?[-\s\.]?[0-9]{2,6}( – )?[0-9]??([-\s\.]?[0-9]{2,4})*([-\s\.]?#?[0-9]{2,4})?(\s[0-9])?$g );
-    log_debug("Research UU encoding...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $uu_field, $&, @-, @+)        while( $map =~ m~[-0-9A-Z)&:;<'%=>!*\$\]\.#,(+/@"]{61}~g );
-    log_debug("Research KB...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $kb_field, $&, @-, @+)        while( $map =~ m~KB[0-9]{7}~g );
-    log_debug("Research word...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $word_field, $&, @-, @+)      while( $map =~ m$[ -~]*(ID|HOST|SYSTEM|WINDOWS|LINUX|PASSWORD|USER|CERTIFICATE|COPYRIGHT)[ -~]{6,}$gi );
-    log_debug("Research time...", $files_ref);
-    process_match($counter_ref, $files_ref, $filename, $time_field, $&, @-, @+)      while( $map =~ m$([0-9]{4}(-[0-9]{2}){2}T([0-9]{2}:){2}[0-9]{2}\.[0-9]+|([A-Z][a-z]{2}\s){2}\s[0-9]{1,2}\s([0-9]{2}:){2}[0-9]{2}\s[0-9]{4}|[0-9]{9,10}\.[0-9]+)$g );
+    log_debug( "Research IP...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $ip_field, $&, @-, @+ )
+      while ( $map =~
+/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}/g
+      );
+    log_debug( "Research domain...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $domain_field, $&, @-,
+        @+ )
+      while (
+        $map =~ /(?!-)[A-Za-z0-9-]+([\-\.]{1}[a-z0-9]+)*\.[A-Za-z]{2,6}/g );
+    log_debug( "Research URL...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $url_field, $&, @-, @+ )
+      while ( $map =~
+m$((http|https)://)(www.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$g
+      );
+    log_debug( "Research base64...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $base64_field, $&, @-,
+        @+ )
+      while ( $map =~
+        m$(?:[A-Za-z\d+/]{4}){10,}(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$g );
+    log_debug( "Research base16...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $base16_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$[0-9a-fA-F]{2}(?P<separator>[^0-9a-fA-F]?)([0-9a-fA-F]{2}(?P=separator)){3,}[0-9a-fA-F]{2}$g
+      );
+    log_debug( "Research email address...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $email_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$(([^<>()[\]\.,;:\s@"]+(\.[^<>()[\]\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$g
+      );
+    log_debug( "Research UUID...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $uuid_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$\{?[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}\}?$g
+      );
+    log_debug( "Research URL encoding...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $urlencode_field, $&,
+        @-, @+ )
+      while ( $map =~
+m$[-a-zA-Z0-9@:%._\+~#?&//=]*(%(25)?[0-9A-Fa-f]{2}){5,}[-a-zA-Z0-9@:%._\+~#?&//=]*$g
+      );
+    log_debug( "Research path...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $path_field, $&, @-,
+        @+ )
+      while ( $map =~ m$(/|C:\\|\.\.?(/|\\\\?))[\w .]{2,}([/\\\w .]+)$g );
+    log_debug( "Research GPS...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $gps_field, $&, @-, @+ )
+      while ( $map =~
+m$([SNsn] )?-?[1-3]?[0-9]{1,2}(° ?|d ?|:|,|\.)-?[0-9]{1,7}('|m|:|[SNsn] ?,? ?|\.|′ ?|° ?|, ?)-?[0-9]{1,7}(\.|[SNsn],| |', [EWew] |″[SNsn] |″ [SNsn] |, ?)-?[0-9]{1,7}("(north|south), |"?[SNsn],? |:|E|° ?|d |[EWew])(-?[0-9]{1,2}(°|′ ?|:|\.|d)(-?[0-9]{1,7}(('|m|″ [EWew]|:|[EWew])(-?[0-9]{1,2}\.-?[0-9]{3}("(east|west)|"?[EWew])?)?)?)?)?$gi
+      );
+    log_debug( "Research hash...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $hash_field, $&, @-,
+        @+ )
+      while ( $map =~
+m~([0-9a-fA-F]{32}([0-9a-fA-F]{8})?([0-9a-fA-F]{24})?([0-9a-fA-F]{64})?|$[0-9]+[a-zA-Z]*$[0-9\w/\.]+$[\w/\.]+)~g
+      );
+    log_debug( "Research phone numbers...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $phone_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$\+?\(?([0-9][- ]?)?(xx)?[0-9]{2,5}\)?(( – )?[- ]?\(?[0-9]{1,3}\)?[ 0-9]?)?( ?\(0\))?( – )?( ?/ ?)?[-\s\.]?\(?[0-9]{2,4}\)?( – )?[-\s\.]?[0-9]{2,6}( – )?[0-9]??([-\s\.]?[0-9]{2,4})*([-\s\.]?#?[0-9]{2,4})?(\s[0-9])?$g
+      );
+    log_debug( "Research UU encoding...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $uu_field, $&, @-, @+ )
+      while ( $map =~ m~[-0-9A-Z)&:;<'%=>!*\$\]\.#,(+/@"]{61}~g );
+    log_debug( "Research KB...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $kb_field, $&, @-, @+ )
+      while ( $map =~ m~KB[0-9]{7}~g );
+    log_debug( "Research word...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $word_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$[ -~]*(ID|HOST|SYSTEM|WINDOWS|LINUX|PASSWORD|USER|CERTIFICATE|COPYRIGHT)[ -~]{6,}$gi
+      );
+    log_debug( "Research time...", $files_ref );
+    process_match( $counter_ref, $files_ref, $filename, $time_field, $&, @-,
+        @+ )
+      while ( $map =~
+m$([0-9]{4}(-[0-9]{2}){2}T([0-9]{2}:){2}[0-9]{2}\.[0-9]+|([A-Z][a-z]{2}\s){2}\s[0-9]{1,2}\s([0-9]{2}:){2}[0-9]{2}\s[0-9]{4}|[0-9]{9,10}\.[0-9]+)$g
+      );
 
-    log_debug("Write JSON report...", $files_ref);
-    my $json = encode_json($counter_ref);
+    log_debug( "Write JSON report...", $files_ref );
+    my $json   = encode_json($counter_ref);
     my $report = $files_ref->{'report'};
-    say $report "$json" || log_and_die "Can't write: report.json: $!", $files_ref;
+    say $report "$json" || log_and_die "Can't write: report.json: $!",
+      $files_ref;
 }
 
 #pod =method test
@@ -579,18 +651,20 @@ sub analysis {
 sub test {
     my ($files_ref) = @_;
 
-    log_debug("Enter in test mode...", $files_ref);
-    log_debug("Defined and open filename...", $files_ref);
+    log_debug( "Enter in test mode...",        $files_ref );
+    log_debug( "Defined and open filename...", $files_ref );
     my $filename = "test.txt";
-    open( my $file, '>', $filename ) or log_and_die "Can't open $filename $!", $files_ref;
+    open( my $file, '>', $filename )
+      or log_and_die "Can't open $filename $!", $files_ref;
 
-    log_debug("Write __DATA__ in $filename...", $files_ref);
-    while (my $line = <DATA>) {
-        say $file $line or log_and_die "Can't write $line in $filename $!", $files_ref;
+    log_debug( "Write __DATA__ in $filename...", $files_ref );
+    while ( my $line = <DATA> ) {
+        say $file $line
+          or log_and_die "Can't write $line in $filename $!", $files_ref;
     }
 
     # close $file;
-    log_debug("$filename closed.", $files_ref);
+    log_debug( "$filename closed.", $files_ref );
 
     analysis $filename, $files_ref;
 
@@ -609,20 +683,25 @@ sub test {
 #pod =cut
 
 sub parse_args {
-	# pod2usage(2) if !defined($ARGV[0]);
-	pod2usage(2) if !(/^(-t|--test|-f|--files|-h|--help)$/ ~~ @ARGV);
+
+    # pod2usage(2) if !defined($ARGV[0]);
+    pod2usage(2) if !( /^(-t|--test|-f|--files|-h|--help)$/ ~~ @ARGV );
 
     GetOptions(
-        't|test' => \my $test,           # Test mode, create a text file with all the matching patterns.
-        'f|files=s' => \my @files,       # Glob syntax of the files to be analysed (comma-separated value).
-        'c|no-color' => \my $color,      # Disabled color mode.
-        'd|debug' => \my $debug,         # Enabled debug mode (with logs, slower).
-        'h|help' => sub{ pod2usage(1); },
+        't|test' => \
+          my $test
+        ,    # Test mode, create a text file with all the matching patterns.
+        'f|files=s' => \
+          my @files
+        ,    # Glob syntax of the files to be analysed (comma-separated value).
+        'c|no-color' => \my $color,    # Disabled color mode.
+        'd|debug'    => \my $debug,    # Enabled debug mode (with logs, slower).
+        'h|help' => sub { pod2usage(1); },
     ) or pod2usage(2);
 
-    @files = split( /,/, join( ',', @files));
+    @files = split( /,/, join( ',', @files ) );
 
-    return ($test, \@files);
+    return ( $test, \@files );
 }
 
 #pod =method closefiles
@@ -643,8 +722,8 @@ sub parse_args {
 sub closefiles {
     my ($files_ref) = @_;
 
-    log_debug("Close all files...", $files_ref);
-    for my $file (values %$files_ref) {
+    log_debug( "Close all files...", $files_ref );
+    for my $file ( values %$files_ref ) {
         close $file;
     }
 }
@@ -660,54 +739,58 @@ sub closefiles {
 
 sub main {
     open my $report, ">>", "report.json" || die "Can't open: report.json: $!";
-    my $csv = Text::CSV->new ( { binary => 1, sep_char => "," } ) or die "Cannot use CSV: ".Text::CSV->error_diag();
+    my $csv = Text::CSV->new( { binary => 1, sep_char => "," } )
+      or die "Cannot use CSV: " . Text::CSV->error_diag();
 
     my %files = (
         report => $report,
-        CSV => $csv,
+        CSV    => $csv,
     );
 
     if ($DEBUG) {
-        open my $logfile, ">>:encoding(utf8)", "$LOGFILENAME" or die "Can't open log file: $LOGFILENAME: $!";
+        open my $logfile, ">>:encoding(utf8)", "$LOGFILENAME"
+          or die "Can't open log file: $LOGFILENAME: $!";
         $files{'log'} = $logfile;
     }
 
     my $files_ref = \%files;
 
     init_log($files_ref);
-    log_debug("Logging initialized. Parse arguments...", $files_ref);
+    log_debug( "Logging initialized. Parse arguments...", $files_ref );
 
-    my ($test, $file_lists_ref) = parse_args;
+    my ( $test, $file_lists_ref ) = parse_args;
 
-    log_debug "Create directory report: ".$NAME."_$SYSTEMDATE...", $files_ref;
-    mkdir $NAME."_$SYSTEMDATE" or log_critical "Can't create directory: ".$NAME."_$SYSTEMDATE: $!" && die "Can't create directory: ".$NAME."_$SYSTEMDATE: $!";
+    log_debug "Create directory report: " . $NAME . "_$SYSTEMDATE...",
+      $files_ref;
+    mkdir $NAME . "_$SYSTEMDATE"
+      or log_critical "Can't create directory: " . $NAME . "_$SYSTEMDATE: $!"
+      && die "Can't create directory: " . $NAME . "_$SYSTEMDATE: $!";
 
-    if (defined($test)) {
+    if ( defined($test) ) {
         test $files_ref;
-        log_debug("End, exit code 0.", $files_ref);
+        log_debug( "End, exit code 0.", $files_ref );
         return 0;
     }
 
     log_debug "Loop on glob syntax list...", $files_ref;
-    foreach my $globfiles (@{ $file_lists_ref }) {
+    foreach my $globfiles ( @{$file_lists_ref} ) {
         log_debug "Get files from $globfiles glob syntax...", $files_ref;
-        foreach my $file (glob($globfiles)) {
+        foreach my $file ( glob($globfiles) ) {
             log_debug "$file found from $globfiles", $files_ref;
             analysis $file, $files_ref;
         }
     }
 
-    log_debug("Close files", $files_ref);
+    log_debug( "Close files", $files_ref );
     closefiles \%files;
 
-    log_debug("End, exit code 0.", $files_ref);
+    log_debug( "End, exit code 0.", $files_ref );
     return 0;
 }
 
 say "\n$COPYRIGHT";
 say "$NAME_ARTS";
 exit main();
-
 
 __DATA__
 
