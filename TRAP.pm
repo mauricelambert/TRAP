@@ -40,7 +40,7 @@ use File::Map 'map_file';
 # use Data::Dumper;
 
 our $NAME            = "TRAP";
-our $VERSION         = "0.1.0";
+our $VERSION         = "0.2.0";
 our $AUTHOR          = "Maurice Lambert";
 our $MAINTAINER      = "Maurice Lambert";
 our $AUTHOR_MAIL     = 'mauricelambert434@gmail.com';
@@ -69,6 +69,24 @@ __|_____|___|____|_______|___|_____|___|____
 
 EOF
 
+our $HELP_MESSAGE = <<'EOF';
+
+TRAP (Tool for Regex Analysis with Perl) version 0.2.0
+
+usage: perl TRAP.pm [-h] [-c] [-d] (-f FILES | -t)
+
+This program analyses Forensic files with regex to extract informations.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c, --no-color        Print without terminal colors (useful for stdout redirection)
+  -d, --debug           Debug mode - enable logs (slower)
+  -f FILES, --files FILES
+                        The forensic files to be analysed (glob syntax, comma-separated values)
+  -t, --test            Test mode (for development, to check regex)
+
+EOF
+
 *FILENAME = \( basename($0) );
 our $FILENAME;
 
@@ -87,7 +105,7 @@ our $SYSTEMDATE;
 our $LOGFILENAME;
 
 my $colormode;
-if ( /^(-c|--no-color)$/ ~~ @ARGV ) {
+if ( grep { $_ eq "-c" or $_ eq "--no-color" } @ARGV ) {
     $colormode = '0';
 }
 else {
@@ -95,7 +113,7 @@ else {
 }
 
 my $debugmode;
-if ( /^(-d|--debug)$/ ~~ @ARGV ) {
+if ( grep { $_ eq "-d" or $_ eq "--debug" } @ARGV ) {
     $debugmode = '1';
 }
 else {
@@ -589,7 +607,8 @@ m$[-a-zA-Z0-9@:%._\+~#?&//=]*(%(25)?[0-9A-Fa-f]{2}){5,}[-a-zA-Z0-9@:%._\+~#?&//=
     log_debug( "Research path...", $files_ref );
     process_match( $counter_ref, $files_ref, $filename, $path_field, $&, @-,
         @+ )
-      while ( $map =~ m$(/|C:\\\\?|\.\.?(/|\\\\?))[\w .]+((/|\\\\?)[\w .]+)+$g );
+      while (
+        $map =~ m$(/|C:\\\\?|\.\.?(/|\\\\?))[\w .]+((/|\\\\?)[\w .]+)+$g );
     log_debug( "Research GPS...", $files_ref );
     process_match( $counter_ref, $files_ref, $filename, $gps_field, $&, @-, @+ )
       while ( $map =~
@@ -685,7 +704,17 @@ sub test {
 sub parse_args {
 
     # pod2usage(2) if !defined($ARGV[0]);
-    pod2usage(2) if !( /^(-t|--test|-f|--files|-h|--help)$/ ~~ @ARGV );
+    pod2usage( -verbose => 1, -exitval => 2, -message => $HELP_MESSAGE )
+      if !(
+        grep {
+                 $_ eq "-t"
+              or $_ eq "--test"
+              or $_ eq "-f"
+              or $_ eq "--files"
+              or $_ eq "-h"
+              or $_ eq "--help"
+        } @ARGV
+      );
 
     GetOptions(
         't|test' => \
@@ -696,8 +725,14 @@ sub parse_args {
         ,    # Glob syntax of the files to be analysed (comma-separated value).
         'c|no-color' => \my $color,    # Disabled color mode.
         'd|debug'    => \my $debug,    # Enabled debug mode (with logs, slower).
-        'h|help' => sub { pod2usage(1); },
-    ) or pod2usage(2);
+        'h|help'     => sub {
+            pod2usage(
+                -verbose => 1,
+                -exitval => 1,
+                -message => $HELP_MESSAGE
+            );
+        },
+    ) or pod2usage( -verbose => 1, -exitval => 2, -message => $HELP_MESSAGE );
 
     @files = split( /,/, join( ',', @files ) );
 
@@ -722,9 +757,17 @@ sub parse_args {
 sub closefiles {
     my ($files_ref) = @_;
 
+    # delete $files_ref->{'CSV'};
+
     log_debug( "Close all files...", $files_ref );
-    for my $file ( values %$files_ref ) {
-        close $file;
+    for my $file ( keys %$files_ref ) {
+
+        # if (ref($file) eq "GLOB") {
+        #     close $file;
+        # }
+        if ( $file ne "CSV" && $file ne "log" ) {
+            close $files_ref->{$file};
+        }
     }
 }
 
@@ -739,8 +782,15 @@ sub closefiles {
 
 sub main {
     open my $report, ">>", "report.json" || die "Can't open: report.json: $!";
-    my $csv = Text::CSV->new( { binary => 1, sep_char => "," } )
-      or die "Cannot use CSV: " . Text::CSV->error_diag();
+    my $csv = Text::CSV->new(
+        {
+            binary          => 1,
+            sep_char        => ",",
+            always_quote    => 1,
+            quote_empty     => 1,
+            # skip_empty_rows => 1
+        }
+    ) or die "Cannot use CSV: " . Text::CSV->error_diag();
 
     my %files = (
         report => $report,
@@ -785,6 +835,7 @@ sub main {
     closefiles \%files;
 
     log_debug( "End, exit code 0.", $files_ref );
+    close $files{"log"} if exists( $files{"log"} );
     return 0;
 }
 
@@ -1109,7 +1160,7 @@ TRAP - Tool for Regex Analysis with Perl
 
 =head2 VERSION
 
-version 0.1.0
+version 0.2.0
 
 =head2 SYNOPSIS
 
