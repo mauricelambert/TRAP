@@ -40,7 +40,7 @@ use File::Map 'map_file';
 # use Data::Dumper;
 
 our $NAME            = "TRAP";
-our $VERSION         = "0.0.1";
+our $VERSION         = "0.1.0";
 our $AUTHOR          = "Maurice Lambert";
 our $MAINTAINER      = "Maurice Lambert";
 our $AUTHOR_MAIL     = 'mauricelambert434@gmail.com';
@@ -572,7 +572,7 @@ m$[0-9a-fA-F]{2}(?P<separator>[^0-9a-fA-F]?)([0-9a-fA-F]{2}(?P=separator)){3,}[0
     process_match( $counter_ref, $files_ref, $filename, $email_field, $&, @-,
         @+ )
       while ( $map =~
-m$(([^<>()[\]\.,;:\s@"]+(\.[^<>()[\]\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$g
+m$(?:(?!.*?[.]{2})[a-zA-Z0-9](?:[a-zA-Z0-9.+!%-]{1,64}|)|\"[a-zA-Z0-9.+!% -]{1,64}\")@[a-zA-Z0-9][a-zA-Z0-9.-]+(.[a-z]{2,}|.[0-9]{1,})$g
       );
     log_debug( "Research UUID...", $files_ref );
     process_match( $counter_ref, $files_ref, $filename, $uuid_field, $&, @-,
@@ -589,7 +589,7 @@ m$[-a-zA-Z0-9@:%._\+~#?&//=]*(%(25)?[0-9A-Fa-f]{2}){5,}[-a-zA-Z0-9@:%._\+~#?&//=
     log_debug( "Research path...", $files_ref );
     process_match( $counter_ref, $files_ref, $filename, $path_field, $&, @-,
         @+ )
-      while ( $map =~ m$(/|C:\\|\.\.?(/|\\\\?))[\w .]{2,}([/\\\w .]+)$g );
+      while ( $map =~ m$(/|C:\\\\?|\.\.?(/|\\\\?))[\w .]+((/|\\\\?)[\w .]+)+$g );
     log_debug( "Research GPS...", $files_ref );
     process_match( $counter_ref, $files_ref, $filename, $gps_field, $&, @-, @+ )
       while ( $map =~
@@ -1109,7 +1109,7 @@ TRAP - Tool for Regex Analysis with Perl
 
 =head2 VERSION
 
-version 0.0.1
+version 0.1.0
 
 =head2 SYNOPSIS
 
