@@ -10,7 +10,7 @@
 
 ## Versions
 
- - **TRAP**: Version 0.2.0
+ - **TRAP**: Version 0.2.1
  - **TRAP::Compare**: Version 0.0.1
  - **StringsCompare**: Version 0.0.1
 
