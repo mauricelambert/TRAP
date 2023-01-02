@@ -7,7 +7,7 @@
 
 ###################
 #    This file implements a forensic analyser based on regex.
-#    Copyright (C) 2022  Maurice Lambert
+#    Copyright (C) 2022, 2023  Maurice Lambert
 
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ our $DESCRIPTION = "This file implements a forensic analyser based on regex.";
 our $URL         = "https://github.com/mauricelambert/$NAME";
 our $LICENSE     = "GPL-3.0 License";
 our $COPYRIGHT   = <<'EOF';
-TRAP (Tool for Regex Analysis with Perl)  Copyright (C) 2022  Maurice Lambert
+TRAP (Tool for Regex Analysis with Perl)  Copyright (C) 2022, 2023  Maurice Lambert
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
@@ -1445,7 +1445,7 @@ Maurice LAMBERT <mauricelambert434@gmail.com>
 
 =head2 COPYRIGHT AND LICENSE
 
-TRAP  Copyright (C) 2022  Maurice Lambert
+TRAP  Copyright (C) 2022, 2023  Maurice Lambert
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
